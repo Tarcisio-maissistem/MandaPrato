@@ -30,7 +30,7 @@ export class BaseService<T> {
 
       let query = supabase
         .from(this.table)
-        .select('*')
+        .select('*', { count: 'exact' })
         .range((page - 1) * limit, page * limit - 1)
         .order(order.column || this.defaultOrderColumn, { ascending: order.direction === 'asc' });
 
@@ -40,10 +40,18 @@ export class BaseService<T> {
         }
       });
 
-      const { data, error } = await query;
+      const { data, error, count } = await query;
 
       if (error) throw new Error(error.message);
-      return { data, error: null };
+      return { 
+        data, 
+        error: null,
+        metadata: {
+          total: count,
+          page,
+          limit
+        }
+      };
     } catch (error) {
       console.error(`Error in ${this.table}.findAll:`, error);
       return { data: null, error: error instanceof Error ? error : new Error(String(error)) };

@@ -11,8 +11,28 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors());
+// Configuração do CORS
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 app.use(express.json());
+
+// Middleware para checar autenticação
+const checkAuth = (req: express.Request, res: express.Response, next: express.Function) => {
+  const apiKey = req.headers.authorization?.split(' ')[1];
+  
+  if (!apiKey || apiKey !== process.env.SUPABASE_ANON_KEY) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  next();
+};
+
+// Aplica o middleware em todas as rotas
+app.use(checkAuth);
 
 // Types
 interface QueryParams {
