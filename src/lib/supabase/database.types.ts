@@ -1,4 +1,3 @@
-// src/lib/supabase/database.types.ts
 export interface Database {
   public: {
     Tables: {
@@ -12,8 +11,8 @@ export interface Database {
           ativo: boolean;
           created_at: string;
         };
-        Insert: Omit<Produtos['Row'], 'id' | 'created_at'>;
-        Update: Partial<Produtos['Insert']>;
+        Insert: Omit<Database['public']['Tables']['produtos']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['produtos']['Insert']>;
       };
       pedidos: {
         Row: {
@@ -23,8 +22,8 @@ export interface Database {
           valor_total: number;
           created_at: string;
         };
-        Insert: Omit<Pedidos['Row'], 'id' | 'created_at'>;
-        Update: Partial<Pedidos['Insert']>;
+        Insert: Omit<Database['public']['Tables']['pedidos']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['pedidos']['Insert']>;
       };
       clientes: {
         Row: {
@@ -34,8 +33,8 @@ export interface Database {
           telefone: string;
           created_at: string;
         };
-        Insert: Omit<Clientes['Row'], 'id' | 'created_at'>;
-        Update: Partial<Clientes['Insert']>;
+        Insert: Omit<Database['public']['Tables']['clientes']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['clientes']['Insert']>;
       };
     };
   };
