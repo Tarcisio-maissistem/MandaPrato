@@ -7,22 +7,24 @@ export interface ServiceResponse<T> {
 
 export class BaseService<T> {
   protected table: string;
+  protected defaultOrderColumn: string;
 
-  constructor(table: string) {
+  constructor(table: string, defaultOrderColumn: string = 'id') {
     this.table = table;
+    this.defaultOrderColumn = defaultOrderColumn;
   }
 
   async findAll(options: { 
     page?: number; 
     limit?: number;
-    order?: { column: string; direction?: 'asc' | 'desc' };
+    order?: { column?: string; direction?: 'asc' | 'desc' };
     filters?: Record<string, any>;
   } = {}): Promise<ServiceResponse<T[]>> {
     try {
       const {
         page = 1,
         limit = 10,
-        order = { column: 'created_at', direction: 'desc' },
+        order = { column: this.defaultOrderColumn, direction: 'asc' },
         filters = {}
       } = options;
 
@@ -30,7 +32,7 @@ export class BaseService<T> {
         .from(this.table)
         .select('*')
         .range((page - 1) * limit, page * limit - 1)
-        .order(order.column, { ascending: order.direction === 'asc' });
+        .order(order.column || this.defaultOrderColumn, { ascending: order.direction === 'asc' });
 
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
